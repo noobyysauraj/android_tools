@@ -86,6 +86,18 @@ common_core() {
     fi
 }
 
+send_msg() {
+    printf "\n<a href=\"https://github.com/$ORG/$DT_REPO/tree/$BRANCH/\">Device tree</a>" >>/home/runner/work/dumper/dumper/telegram/tg.html
+    printf "\n<a href=\"https://github.com/$ORG/$VT_REPO/tree/$BRANCH/\">Vendor tree</a>" >>/home/runner/work/dumper/dumper/telegram/tg.html
+    printf "\n<b>NOTE: Dummy Dt & VT was already present so haven't created new.</b>" >>/home/runner/work/dumper/dumper/telegram/tg.html
+    printf "\n<b>ғᴏʟʟᴏᴡ%s @saurajdumps</b>" >>/home/runner/work/dumper/dumper/telegram/tg.html
+    CHAT_ID="@saurajdumps"
+    HTML_FILE=$(cat /home/runner/work/dumper/dumper/telegram/tg.html)
+    curl -s "https://api.telegram.org/bot${TG_TOKEN}/editMessageText" --data "message_id=${MESSAGE_ID}&text=${HTML_FILE}&chat_id=${CHAT_ID}&parse_mode=HTML&disable_web_page_preview=True" >/dev/null 2>&1
+    curl -s "https://api.telegram.org/bot${TG_TOKEN}/editMessageText" --data "message_id=${M_ID}&text=${HTML_FILE}&chat_id=${C_ID}&parse_mode=HTML&disable_web_page_preview=True" >/dev/null 2>&1
+
+}
+
 call_methods() {
     rm -rf "$DT_DIR" && mkdir -p "$DT_DIR"
     # create repo's
@@ -101,7 +113,7 @@ call_methods() {
         curl https://api.github.com/user/repos\?access_token=$GIT_TKN -d '{"name": "'"$DT_REPO"'","description": "'"$DT_REPO_DESC"'","private": false,"has_issues": true,"has_projects": false,"has_wiki": true}' >/dev/null 2>&1
         curl https://api.github.com/user/repos\?access_token=$GIT_TKN -d '{"name": "'"$VT_REPO"'","description": "'"$VT_REPO_DESC"'","private": false,"has_issues": true,"has_projects": false,"has_wiki": true}' >/dev/null 2>&1
     fi
-    [[ ! -z "$GIT_TKN" ]] && wget "https://raw.githubusercontent.com/$ORG/$DT_REPO/$BRANCH/Android.mk" -O "$PROJECT_DIR/dummy_dt/working/check" 2>/dev/null && send_msg && echo "Dummy DT already done!" && exit 1
+    [[ ! -z "$GIT_TKN" ]] && wget "https://raw.githubusercontent.com/$ORG/$DT_REPO/$BRANCH/Android.mk" -O "$PROJECT_DIR/dummy_dt/working/check" 2>/dev/null && send_msg && echo "Dummy DT already done!" && exit 0
 
     # DummyDT
     [[ "$VERBOSE" != "n" ]] && echo -e "Preparing vendor_prop.mk"
@@ -406,17 +418,6 @@ common_overlay() {
     fi
 }
 
-send_msg() {
-    printf "\n<a href=\"https://github.com/$ORG/$DT_REPO/tree/$BRANCH/\">Device tree</a>" >>/home/runner/work/dumper/dumper/telegram/tg.html
-    printf "\n<a href=\"https://github.com/$ORG/$VT_REPO/tree/$BRANCH/\">Vendor tree</a>" >>/home/runner/work/dumper/dumper/telegram/tg.html
-    printf "\n<b>NOTE: Dummy Dt & VT was already present so haven't created new.</b>" >>/home/runner/work/dumper/dumper/telegram/tg.html
-    printf "\n<b>ғᴏʟʟᴏᴡ%s @saurajdumps</b>" >>/home/runner/work/dumper/dumper/telegram/tg.html
-    CHAT_ID="@saurajdumps"
-    HTML_FILE=$(cat /home/runner/work/dumper/dumper/telegram/tg.html)
-    curl -s "https://api.telegram.org/bot${TG_TOKEN}/editMessageText" --data "message_id=${MESSAGE_ID}&text=${HTML_FILE}&chat_id=${CHAT_ID}&parse_mode=HTML&disable_web_page_preview=True" >/dev/null 2>&1
-    curl -s "https://api.telegram.org/bot${TG_TOKEN}/editMessageText" --data "message_id=${M_ID}&text=${HTML_FILE}&chat_id=${C_ID}&parse_mode=HTML&disable_web_page_preview=True" >/dev/null 2>&1
-
-}
 
 [[ -z "$1" ]] && echo "Give arguement!" && exit 1
 
