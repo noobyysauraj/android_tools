@@ -124,6 +124,13 @@ git_op() {
     [[ "$VERBOSE" != "n" ]] && echo -e "Pushing DummyDT"
     git init .
     git checkout -b $BRANCH
+    find . -maxdepth 2 -type d | while read directory; do
+        if [ "$directory" != "." ] && [ "$directory" != ".." ]; then
+            git add "$directory"
+            dir_name=$(basename "$directory")
+            git -c "user.name=noobyysauraj" -c "user.email=gitsauraj@gmail.com" commit -sm "${dir_name} : ${DESCRIPTION}"
+        fi
+    done
     git add --all
     git -c "user.name=noobyysauraj" -c "user.email=gitsauraj@gmail.com" commit -sm "$DESCRIPTION"
     git push https://noobyysauraj:"$GIT_TKN"@github.com/"$ORG"/"$DT_REPO".git --all 
@@ -136,6 +143,13 @@ git_op() {
     git init .
     find -size +97M -printf '%P\n' -o -name *sensetime* -printf '%P\n' -o -name *.lic -printf '%P\n' >.gitignore
     git checkout -b $BRANCH
+    find . -maxdepth 2 -type d | while read directory; do
+        if [ "$directory" != "." ] && [ "$directory" != ".." ]; then
+            git add "$directory"
+            dir_name=$(basename "$directory")
+            git -c "user.name=noobyysauraj" -c "user.email=gitsauraj@gmail.com" commit -sm "${dir_name} : ${DESCRIPTION}"
+        fi
+    done
     git add --all
     git -c "user.name=noobyysauraj" -c "user.email=gitsauraj@gmail.com" commit -sm "$DESCRIPTION"
     git push https://noobyysauraj:"$GIT_TKN"@github.com/"$ORG"/"$VT_REPO".git --all
